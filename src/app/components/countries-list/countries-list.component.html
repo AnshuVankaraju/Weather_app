@@ -1,0 +1,91 @@
+<div class="page">
+  <header class="header">
+    <div class="header-inner">
+      <h1>&#127757; Country &amp; Weather Explorer</h1>
+      <p>Explore countries and check live weather at their capitals</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-box">
+        <span class="search-icon">&#128269;</span>
+        <input
+          type="text"
+          placeholder="Search countries..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+        />
+      </div>
+      <div class="region-filters">
+        @for (region of regions; track region) {
+          <button
+            [class.active]="selectedRegion() === region"
+            (click)="setRegion(region)"
+          >
+            {{ region }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="loader-wrap">
+        <div class="spinner"></div>
+        <p>Loading countries...</p>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error()) {
+      <div class="error-banner">&#9888;&#65039; {{ error() }}</div>
+    }
+
+    <!-- Results count -->
+    @if (!loading() && !error()) {
+      <p class="results-count">{{ filteredCountries().length }} countries found</p>
+    }
+
+    <!-- Countries grid -->
+    @if (!loading() && !error()) {
+      <div class="countries-grid">
+        @for (country of filteredCountries(); track country.name.common) {
+          <div class="country-card" (click)="viewDetails(country)">
+            <div class="card-flag">
+              <img
+                [src]="country.flags.png"
+                [alt]="country.flags.alt || country.name.common + ' flag'"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <h3>{{ country.name.common }}</h3>
+              <p class="region">
+                <span class="badge">{{ country.region }}</span>
+              </p>
+              <div class="card-stats">
+                <span>&#128101; {{ formatPopulation(country.population) }}</span>
+                @if (country.capital?.[0]) {
+                  <span>&#127963;&#65039; {{ country.capital?.[0] }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!loading() && !error() && filteredCountries().length === 0) {
+      <div class="empty-state">
+        <span>&#127758;</span>
+        <p>No countries match your search.</p>
+        <button class="clear-btn" (click)="searchQuery.set(''); setRegion('All')">
+          Clear filters
+        </button>
+      </div>
+    }
+  </main>
+</div>

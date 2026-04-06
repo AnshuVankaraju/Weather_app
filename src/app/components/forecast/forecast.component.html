@@ -1,0 +1,16 @@
+<div class="forecast">
+  <h3>5-Day Forecast</h3>
+  <div class="forecast-grid">
+    @for (day of dailyForecasts(); track day.date) {
+      <div class="forecast-item">
+        <span class="day">{{ day.date | date:'EEE' }}</span>
+        <img [src]="weatherService.getWeatherIconUrl(day.icon)" [alt]="day.description" />
+        <span class="desc">{{ day.description | titlecase }}</span>
+        <div class="temps">
+          <span class="max">{{ day.maxTemp | number:'1.0-0' }}°</span>
+          <span class="min">{{ day.minTemp | number:'1.0-0' }}°</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

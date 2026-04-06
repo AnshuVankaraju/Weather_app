@@ -1,0 +1,133 @@
+<div class="page">
+  <header class="detail-header">
+    <div class="header-inner">
+      <button class="back-btn" (click)="goBack()">&#8592; Back to Countries</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Loading country -->
+    @if (loadingCountry()) {
+      <div class="loader-wrap">
+        <div class="spinner"></div>
+        <p>Loading country details...</p>
+      </div>
+    }
+
+    <!-- Country error -->
+    @if (countryError()) {
+      <div class="error-banner">&#9888;&#65039; {{ countryError() }}</div>
+    }
+
+    <!-- Country details -->
+    @if (country(); as c) {
+      <div class="detail-container">
+
+        <!-- Hero: flag + title -->
+        <div class="country-hero">
+          <div class="flag-wrap">
+            <img
+              [src]="c.flags.svg || c.flags.png"
+              [alt]="c.flags.alt || c.name.common + ' flag'"
+              class="country-flag"
+            />
+          </div>
+          <div class="country-title">
+            <h1>{{ c.name.common }}</h1>
+            <p class="official-name">{{ c.name.official }}</p>
+            <span class="region-badge">{{ c.region }}</span>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="info-grid">
+
+          <!-- Country info card -->
+          <div class="info-card">
+            <h2>Country Information</h2>
+            <ul class="info-list">
+              <li class="info-item">
+                <span class="label">&#127963;&#65039; Capital</span>
+                <span class="value">{{ c.capital?.[0] || 'N/A' }}</span>
+              </li>
+              <li class="info-item">
+                <span class="label">&#128101; Population</span>
+                <span class="value">{{ c.population | number }}</span>
+              </li>
+              <li class="info-item">
+                <span class="label">&#128208; Area</span>
+                <span class="value">{{ c.area | number }} km&#178;</span>
+              </li>
+              <li class="info-item">
+                <span class="label">&#128178; Currency</span>
+                <span class="value">{{ getCurrencies(c) }}</span>
+              </li>
+              <li class="info-item">
+                <span class="label">&#128483;&#65039; Languages</span>
+                <span class="value">{{ getLanguages(c) }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Weather card -->
+          <div class="info-card weather-section">
+            <h2>Weather at Capital</h2>
+
+            @if (!c.capital?.[0]) {
+              <p class="no-data">No capital city information available.</p>
+            } @else if (loadingWeather()) {
+              <div class="loader-wrap small">
+                <div class="spinner small-spinner"></div>
+                <p>Fetching weather for {{ c.capital?.[0] }}...</p>
+              </div>
+            } @else if (weatherError()) {
+              <div class="weather-error">
+                <p>&#9888;&#65039; {{ weatherError() }}</p>
+                <p class="api-note">
+                  Tip: Add a valid OpenWeatherMap API key to
+                  <code>src/environments/environment.ts</code> to see live weather.
+                </p>
+              </div>
+            } @else if (weather(); as w) {
+              <div class="weather-display">
+                <div class="weather-main">
+                  <img
+                    [src]="weatherService.getWeatherIconUrl(w.weather[0].icon)"
+                    [alt]="w.weather[0].description"
+                    class="weather-icon"
+                  />
+                  <div class="weather-headline">
+                    <div class="temp">{{ w.main.temp | number: '1.0-0' }}°C</div>
+                    <div class="condition">{{ w.weather[0].description | titlecase }}</div>
+                  </div>
+                </div>
+                <div class="weather-details">
+                  <div class="w-item">
+                    <span class="w-label">Feels like</span>
+                    <strong>{{ w.main.feels_like | number: '1.0-0' }}°C</strong>
+                  </div>
+                  <div class="w-item">
+                    <span class="w-label">Humidity</span>
+                    <strong>{{ w.main.humidity }}%</strong>
+                  </div>
+                  <div class="w-item">
+                    <span class="w-label">Wind</span>
+                    <strong>{{ w.wind.speed | number: '1.0-1' }} m/s</strong>
+                  </div>
+                  <div class="w-item">
+                    <span class="w-label">Min / Max</span>
+                    <strong>
+                      {{ w.main.temp_min | number: '1.0-0' }}° /
+                      {{ w.main.temp_max | number: '1.0-0' }}°
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+    }
+  </main>
+</div>

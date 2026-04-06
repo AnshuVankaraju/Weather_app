@@ -1,0 +1,36 @@
+<div class="weather-card">
+  <div class="card-header">
+    <div class="location">
+      <h2>{{ weather().name }}, {{ weather().sys.country }}</h2>
+    </div>
+    <div class="condition">
+      <img [src]="weatherService.getWeatherIconUrl(weather().weather[0].icon)"
+           [alt]="weather().weather[0].description | titlecase" />
+      <span>{{ weather().weather[0].description | titlecase }}</span>
+    </div>
+  </div>
+
+  <div class="temp-section">
+    <div class="temp">{{ weather().main.temp | number:'1.0-0' }}°C</div>
+    <div class="feels-like">Feels like {{ weather().main.feels_like | number:'1.0-0' }}°C</div>
+    <div class="temp-range">
+      <span>&#8593; {{ weather().main.temp_max | number:'1.0-0' }}°</span>
+      <span>&#8595; {{ weather().main.temp_min | number:'1.0-0' }}°</span>
+    </div>
+  </div>
+
+  <div class="details-grid">
+    <div class="detail-item">
+      <span class="label">Humidity</span>
+      <span class="value">{{ weather().main.humidity }}%</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Wind</span>
+      <span class="value">{{ weather().wind.speed | number:'1.0-1' }} m/s {{ getWindDirection(weather().wind.deg) }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Visibility</span>
+      <span class="value">{{ (weather().visibility / 1000) | number:'1.0-1' }} km</span>
+    </div>
+  </div>
+</div>
